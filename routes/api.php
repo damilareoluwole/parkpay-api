@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\In\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,10 +16,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('auth')->group(function () {
-    Route::post('/register', [RegistrationController::class, 'register']);
-    Route::post('/register', [RegistrationController::class, 'register']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-
+    Route::prefix('in')->group(function () {
+        Route::prefix('user')->group(function () {
+            Route::get('/profile', [UserController::class, 'profile']);
+        });
+    });
+    Route::post('/logout', [AuthController::class, 'logout']);
 });

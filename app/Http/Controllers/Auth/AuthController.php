@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
@@ -34,6 +35,11 @@ class AuthController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
+        Wallet::create([
+            "user_id" => $user->id,
+            "balance" => 275000
+        ]);
+
         return $this->generateToken('Account created successfully', $user);
     }
 
@@ -53,12 +59,12 @@ class AuthController extends Controller
 
         if (!$user)
             return response()->json([
-                'message' => 'Invalid login or password'
+                'message' => 'Invalid login credentials'
             ], Response::HTTP_UNAUTHORIZED);
 
         if(!Hash::check($request->password, $user->password)){
             return response()->json([
-                'message' => 'Invalid login or password'
+                'message' => 'Invalid login credentials'
             ], Response::HTTP_UNAUTHORIZED);
         }
         
@@ -82,6 +88,19 @@ class AuthController extends Controller
                 'token' => $token,
                 'user' => UserResource::make($user)
             ]
+        ]);
+    }
+
+    /**
+     * Summary of logout
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json([
+            'message' => 'Logout successfully'
         ]);
     }
 }
