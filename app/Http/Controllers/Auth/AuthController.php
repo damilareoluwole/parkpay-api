@@ -25,7 +25,7 @@ class AuthController extends Controller
             'phone' => 'required|digits:11|unique:users',
             'email' => 'required|email:dns|unique:users',
             'password' => 'required|confirmed|min:6',
-            'referral_code' => 'min:6'
+            'referral' => 'min:6'
         ]);
 
         $user = User::create([

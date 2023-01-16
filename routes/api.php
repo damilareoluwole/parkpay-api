@@ -24,6 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('in')->group(function () {
         Route::prefix('user')->group(function () {
             Route::get('/profile', [UserController::class, 'profile']);
+
+            Route::prefix('transactions')->group(function () {
+                Route::get('/', [UserController::class, 'profile']);
+            });
+        
         });
     });
     Route::post('/logout', [AuthController::class, 'logout']);
