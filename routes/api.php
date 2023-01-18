@@ -22,18 +22,27 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::prefix('in')->group(function () {
-        Route::prefix('user')->group(function () {
-            Route::get('/profile', [UserController::class, 'profile']);
+    Route::prefix('in')->group(
+        function () {
+            Route::prefix('user')->group(
+                function () {
+                        Route::get('/profile', [UserController::class, 'profile']);
 
-            Route::prefix('transactions')->group(function () {
-                Route::get('/', [TransactionController::class, 'transactions']);
-            }
+                        Route::prefix('transactions')->group(
+                            function () {
+                                            Route::get('/', [TransactionController::class, 'transactions']);
+                                        }
+                        );
+
+                        Route::prefix('payment')->group(
+                            function () {
+                                            Route::post('/receive', [TransactionController::class, 'receivePayment']);
+                                        }
+                        );
+
+                    }
             );
-
         }
-        );
-    }
     );
     Route::post('/logout', [AuthController::class, 'logout']);
 });

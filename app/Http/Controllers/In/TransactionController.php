@@ -22,4 +22,30 @@ class TransactionController extends Controller
             "data" => $request->user()->transactions
         ]);
     }
+
+    /**
+     * Summary of receivePayment
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function receivePayment(Request $request)
+    {
+        $this->validate($request, [
+            'amount' => 'required|numeric'
+        ]);
+        
+        return response()->json([
+            "message" => "Here you go.",
+            "data" => [
+                "amount" => $request->amount,
+                "description" => $request->description ?? null,
+                "account" => [
+                    "bank" => "Zulu Bank",
+                    "account_number" => "01238746744",
+                    "account_name" => "Swwipe Checkout",
+                    "amount" => $request->amount
+                ]
+            ]
+        ]);
+    }
 }
