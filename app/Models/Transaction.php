@@ -10,4 +10,16 @@ class Transaction extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+        /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'updated_at'
+    ];
+
+    const CREDIT= "CREDIT"; 
+    const DEBIT= "DEBIT"; 
 }

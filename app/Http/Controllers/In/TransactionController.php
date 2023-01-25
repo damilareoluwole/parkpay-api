@@ -4,6 +4,7 @@ namespace App\Http\Controllers\In;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
@@ -43,6 +44,41 @@ class TransactionController extends Controller
                 "account_number" => "01238746744",
                 "account_name" => "Swwipe Checkout"
             ]
+        ]);
+    }
+
+    /**
+     * Summary of creditTransaction
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function creditTransaction(Request $request)
+    {
+        $this->validate($request, [
+            'amount' => 'required|numeric',
+            'sender_account_number' => 'required|digits:10',
+            'sender_account_name' => 'required',
+            'sender_bank_name' => 'required'
+        ]);
+
+        $wallet = $request->user()->wallet;
+        
+        $transactions = new Transaction();
+        $transactions->type = Transaction::CREDIT;
+        $transactions->user_id = $request->user()->id;
+        $transactions->wallet_id = $wallet->id;
+        $transactions->amount = $request->amount;
+        $transactions->account_no = $request->sender_account_number;
+        $transactions->account_name = $request->sender_account_name;
+        $transactions->bank_name = $request->sender_bank_name;
+        $transactions->save();
+
+        $wallet->balance += $request->amount;
+        $wallet->save();
+
+        return response()->json([
+            "message" => "Successful.",
+            "data" => $transactions
         ]);
     }
 }
