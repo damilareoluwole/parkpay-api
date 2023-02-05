@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\In\BankController;
 use App\Http\Controllers\In\TransactionController;
 use App\Http\Controllers\In\UserController;
 use Illuminate\Support\Facades\Route;
@@ -16,30 +17,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-});
+    Route::prefix('auth')->group(function () {
+        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
 
-Route::middleware('auth:sanctum')->group(function () {Route::prefix('in')->group(function () {
+    Route::get('/banks', [BankController::class, 'banks']);
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::prefix('in')->group(function () {
             Route::prefix('user')->group(function () {
                 Route::get('/profile', [UserController::class, 'profile']);
 
                 Route::prefix('transactions')->group(function () {
                     Route::get('/', [TransactionController::class, 'transactions']);
-                }
-                );
+                });
 
                 Route::prefix('payment')->group(function () {
                     Route::post('/receive', [TransactionController::class, 'receivePayment']);
                     Route::post('/receive/credit', [TransactionController::class, 'creditTransaction']);
-                }
-                );
-
-            }
-            );
-        }
-    );
-    Route::post('/logout', [AuthController::class, 'logout']);
-});
+                });
+            });
+        });
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
