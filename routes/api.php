@@ -39,6 +39,9 @@ use Illuminate\Support\Facades\Route;
                     Route::post('/receive/credit', [TransactionController::class, 'creditTransaction']);
                 });
             });
+            Route::prefix('account')->group(function () {
+                Route::post('/verify', [BankController::class, 'verifyAccount']);
+            });
         });
         Route::post('/logout', [AuthController::class, 'logout']);
     });

@@ -14,4 +14,20 @@ class BankController extends Controller
     {
         return response()->json(['message' => 'Here you go.', 'data' => Bank::all()]);
     }
+
+    public function verifyAccount(Request $request)
+    {
+        $this->validate($request, [
+            "bankCode" => "required|string",
+            "accountNumber" => "required|string"
+            
+        ]);
+        
+        return response()->json(['message' => 'Here you go.', 'data' => [
+            "bankCode"=> $request->bankCode,
+            "accountNumber"=> $request->accountNumber,
+            "accountName"=>"Damilare Oluwole",
+            "bank"=>"Access Bank"
+        ]]);
+    }
 }
