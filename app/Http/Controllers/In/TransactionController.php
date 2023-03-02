@@ -61,11 +61,12 @@ class TransactionController extends Controller
             'sender_bank_name' => 'required'
         ]);
 
-        $wallet = $request->user()->wallet;
+        $user = $request->user();
+        $wallet = $user->wallet;
         
         $transactions = new Transaction();
         $transactions->type = Transaction::CREDIT;
-        $transactions->user_id = $request->user()->id;
+        $transactions->user_id = $user->id;
         $transactions->wallet_id = $wallet->id;
         $transactions->amount = $request->amount;
         $transactions->account_no = $request->sender_account_number;
@@ -77,8 +78,12 @@ class TransactionController extends Controller
         $wallet->save();
 
         return response()->json([
+            "status" => true,
             "message" => "Successful.",
-            "data" => $transactions
+            "data" => [
+                "transaction" => $transactions,
+                'user' => UserResource::make($user)
+            ]
         ]);
     }
 }
