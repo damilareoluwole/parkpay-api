@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\In;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\Bank;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
@@ -29,5 +31,46 @@ class BankController extends Controller
             "accountName"=>"Damilare Oluwole",
             "bank"=>"Access Bank"
         ]]);
+    }
+
+    public function transfer(Request $request)
+    {
+        $this->validate($request, [
+            'amount' => 'required|numeric|min:100',
+            'account_number' => 'required|digits:10',
+            'pin' => 'required|digits:4',
+            'bank' => 'required'
+        ]);
+
+        if($request->pin != '1234')
+            return response()->json(["status" => false,"message" => "Invalid pin.","data" => []]);
+
+        $user = $request->user();
+        $wallet = $user->wallet;
+            
+        if($wallet->balance < $request->amount)
+            return response()->json(["status" => false,"message" => "Insufficient fund.","data" => []]);
+        
+        $transactions = new Transaction();
+        $transactions->type = Transaction::DEBIT;
+        $transactions->user_id = $user->id;
+        $transactions->wallet_id = $wallet->id;
+        $transactions->amount = $request->amount;
+        $transactions->account_no = $request->account_number;
+        $transactions->account_name = "Damilare Oluwole";
+        $transactions->bank_name = "Access Bank";
+        $transactions->save();
+
+        $wallet->balance -= $request->amount;
+        $wallet->save();
+
+        return response()->json([
+            "status" => true,
+            "message" => "Successful.",
+            "data" => [
+                "transaction" => $transactions,
+                'user' => UserResource::make($user)
+            ]
+        ]);
     }
 }

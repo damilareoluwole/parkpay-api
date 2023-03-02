@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Route;
             });
             Route::prefix('account')->group(function () {
                 Route::post('/verify', [BankController::class, 'verifyAccount']);
+                Route::post('/transfer', [BankController::class, 'transfer']);
             });
         });
         Route::post('/logout', [AuthController::class, 'logout']);
