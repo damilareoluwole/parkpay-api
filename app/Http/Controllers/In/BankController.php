@@ -49,7 +49,7 @@ class BankController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid Pin'
-            ], Response::HTTP_UNAUTHORIZED);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $wallet = $user->wallet;
