@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
     Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('in')->group(function () {
             Route::prefix('user')->group(function () {
+                Route::post('/pin/add', [AuthController::class, 'addPin']);
                 Route::get('/profile', [UserController::class, 'profile']);
 
                 Route::prefix('transactions')->group(function () {

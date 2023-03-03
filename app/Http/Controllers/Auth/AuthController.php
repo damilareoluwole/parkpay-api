@@ -91,6 +91,25 @@ class AuthController extends Controller
         ]);
     }
 
+    public function addPin(Request $request)
+    {
+        $this->validate($request, [
+            'pin' => 'required|digits:4'
+        ]);
+
+        $user = $request->user();
+        $user->pin = bcrypt($request->pin);
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Pin added successfully',
+            'data' => [
+                'user' => UserResource::make($user)
+            ]
+        ]);
+    }
+
     /**
      * Summary of logout
      * @param Request $request

@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Bank;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 
@@ -42,14 +43,19 @@ class BankController extends Controller
             'bank' => 'required'
         ]);
 
-        if($request->pin != '1234')
-            return response()->json(["status" => false,"message" => "Invalid pin.","data" => []]);
-
         $user = $request->user();
+        
+        if(!Hash::check($request->pin, $user->pin)){
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid Pin'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         $wallet = $user->wallet;
             
         if($wallet->balance < $request->amount)
-            return response()->json(["status" => false,"message" => "Insufficient fund.","data" => []]);
+            return response()->json(["status" => false,"message" => "Insufficient fund.","data" => []], Response::HTTP_BAD_REQUEST);
         
         $transactions = new Transaction();
         $transactions->type = Transaction::DEBIT;
